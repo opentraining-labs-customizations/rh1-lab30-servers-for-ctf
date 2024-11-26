@@ -49,6 +49,22 @@
       args:
         creates: /ctfd/.ctfd_secret_key
 
+    - name: Configure default container registry
+      block:
+      - name: Backup existing registries.conf
+      copy:
+        src: /etc/containers/registries.conf
+        dest: /etc/containers/registries.conf.bak
+        remote_src: yes
+
+    - name: Set docker.io as default registry
+      lineinfile:
+        path: /etc/containers/registries.conf
+        regexp: '^registries =.*'
+        line: 'registries = ["docker.io", "quay.io", "registry.access.redhat.com", "registry.redhat.io"]'
+        insertafter: 'unqualified-search-registries ='
+
+
     - name: Run podman-compose to deploy CTFD
       command: /usr/local/bin/podman-compose up -d
       args:
