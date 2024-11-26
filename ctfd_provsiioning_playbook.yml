@@ -50,7 +50,7 @@
         creates: /ctfd/.ctfd_secret_key
 
     - name: Run podman-compose to deploy CTFD
-      command: podman-compose up -d
+      command: /usr/local/bin/podman-compose up -d
       args:
         chdir: "{{ ctfd_dir }}/CTFd"
 
