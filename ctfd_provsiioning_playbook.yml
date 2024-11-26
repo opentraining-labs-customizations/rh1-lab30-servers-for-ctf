@@ -45,9 +45,9 @@
         force: yes
 
     - name: Generate CTFD secret key
-      command: head -c 64 /dev/urandom > {{ ctfd_dir }}/.ctfd_secret_key
+      shell: head -c 64 /dev/urandom > /ctfd/.ctfd_secret_key
       args:
-        creates: "{{ ctfd_dir }}/.ctfd_secret_key"
+        creates: /ctfd/.ctfd_secret_key
 
     - name: Run podman-compose to deploy CTFD
       command: podman-compose up -d
