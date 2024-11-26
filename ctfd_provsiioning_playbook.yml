@@ -2,7 +2,7 @@
 ---
 - name: Automate CTFD Provisioning
   hosts: all
-  become: yes
+  become: true
   vars:
     ctfd_dir: "/ctfd"
     selinux_config: "/etc/selinux/config"
