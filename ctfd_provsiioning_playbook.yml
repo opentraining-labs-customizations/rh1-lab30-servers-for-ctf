@@ -1,7 +1,7 @@
 
 ---
 - name: Automate CTFD Provisioning
-  hosts: ctfdashboard
+  hosts: all
   become: yes
   vars:
     ctfd_dir: "/ctfd"
