@@ -1,0 +1,38 @@
+
+---
+- name: Dynamic Table Configuration via Callback
+  gather_facts: no
+  vars:
+    infra_fqdn: ""  # Full FQDN for the infra CI, manually provided or pre-set
+
+  tasks:
+    - name: Capture triggering host information
+      set_fact:
+        triggering_host: "{{ inventory_hostname }}"
+        triggering_fqdn: "{{ hostvars[inventory_hostname]['ansible_fqdn'] | default(triggering_host + '.' + infra_fqdn) }}"
+
+    - name: Generate unique table label for triggering host
+      set_fact:
+        table_label: "table{{ inventory_hostname.split('.')[0] }}"
+
+    - name: Generate callback URL for triggering host
+      set_fact:
+        callback_url: "https://controller.{{ infra_fqdn }}/api/v2/job_templates/{{ table_label }}/callback/"
+
+    - name: Log details of the triggering table
+      copy:
+        content: |
+          Table Configuration for {{ triggering_host }}:
+          - FQDN: {{ triggering_fqdn }}
+          - Label: {{ table_label }}
+          - Callback URL: {{ callback_url }}
+        dest: /tmp/table_{{ triggering_host }}_config.log
+
+    - name: Update AAP Inventory for the triggering table
+      # Placeholder for dynamic inventory updates in AAP
+      debug:
+        msg:
+          - "Updating AAP inventory for table: {{ triggering_host }}"
+          - "Label: {{ table_label }}"
+          - "FQDN: {{ triggering_fqdn }}"
+          - "Callback URL: {{ callback_url }}"
