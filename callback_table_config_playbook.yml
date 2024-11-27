@@ -1,6 +1,7 @@
 
 ---
 - name: Dynamic Table Configuration via Callback
+  hosts: all
   gather_facts: no
   vars:
     infra_fqdn: ""  # Full FQDN for the infra CI, manually provided or pre-set
