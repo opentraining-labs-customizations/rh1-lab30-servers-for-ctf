@@ -1,4 +1,3 @@
-
 ---
 - name: Automate CTFD Provisioning
   hosts: all
@@ -9,17 +8,17 @@
 
   tasks:
     - name: Ensure SELinux is set to permissive temporarily
-      command: setenforce 0
-      ignore_errors: yes
+      ansible.builtin.command: setenforce 0
+      ignore_errors: true
 
     - name: Set SELinux to permissive permanently
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: "{{ selinux_config }}"
         regexp: '^SELINUX='
         line: 'SELINUX=permissive'
 
     - name: Install required packages
-      package:
+      ansible.builtin.package:
         name:
           - podman
           - python3
@@ -28,50 +27,50 @@
         state: present
 
     - name: Install podman-compose using pip3
-      pip:
+      ansible.builtin.pip:
         name: podman-compose
         executable: pip3
 
     - name: Create CTFD directory
-      file:
+      ansible.builtin.file:
         path: "{{ ctfd_dir }}"
         state: directory
         mode: '0755'
 
     - name: Clone the CTFD repository
-      git:
+      ansible.builtin.git:
         repo: https://github.com/CTFd/CTFd.git
         dest: "{{ ctfd_dir }}/CTFd"
-        force: yes
+        force: true
 
     - name: Generate CTFD secret key
-      shell: head -c 64 /dev/urandom > /ctfd/.ctfd_secret_key
+      ansible.builtin.shell: head -c 64 /dev/urandom > /ctfd/.ctfd_secret_key
       args:
         creates: /ctfd/.ctfd_secret_key
 
     - name: Configure default container registry
       block:
       - name: Backup existing registries.conf
-      copy:
-        src: /etc/containers/registries.conf
-        dest: /etc/containers/registries.conf.bak
-        remote_src: yes
+        ansible.builtin.copy:
+          src: /etc/containers/registries.conf
+          dest: /etc/containers/registries.conf.bak
+          remote_src: true
 
-    - name: Set docker.io as default registry
-      lineinfile:
-        path: /etc/containers/registries.conf
-        regexp: '^registries =.*'
-        line: 'registries = ["docker.io", "quay.io", "registry.access.redhat.com", "registry.redhat.io"]'
-        insertafter: 'unqualified-search-registries ='
+      - name: Set docker.io as default registry
+        ansible.builtin.lineinfile:
+          path: /etc/containers/registries.conf
+          regexp: '^registries =.*'
+          line: 'registries = ["docker.io", "quay.io", "registry.access.redhat.com", "registry.redhat.io"]'
+          insertafter: 'unqualified-search-registries ='
 
 
     - name: Run podman-compose to deploy CTFD
-      command: /usr/local/bin/podman-compose up -d
+      ansible.builtin.command: /usr/local/bin/podman-compose up -d
       args:
         chdir: "{{ ctfd_dir }}/CTFd"
 
     - name: Validate CTFD deployment (HTTP check)
-      uri:
+      ansible.builtin.uri:
         url: http://localhost
         status_code: 200
       register: http_check
@@ -80,7 +79,7 @@
       until: http_check.status == 200
 
     - name: Log deployment details
-      copy:
+      ansible.builtin.copy:
         content: |
           Deployment log:
           Hostname: {{ ansible_fqdn }}
