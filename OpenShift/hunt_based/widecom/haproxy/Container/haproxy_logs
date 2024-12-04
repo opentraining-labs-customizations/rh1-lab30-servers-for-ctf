@@ -1,0 +1,10 @@
+<134>timestamp1 haproxy[11]: ::1:42188 -> ::1:9445 timestamp2 main masters/control-plane-cluster 1/0/5 3994 -- 95/95/94/66/0 0/0
+<134>timestamp1 haproxy[11]: ::1:36972 -> ::1:9445 timestamp2 main masters/control-plane-cluster 1/0/15 3994 -- 95/95/94/6/0 0/0
+<134>timestamp1 haproxy[11]: ::1:54292 -> ::1:9445 timestamp2 main masters/control-plane-cluster 1/0/9 3994 -- 95/95/94/22/0 0/0
+<134>timestamp1 haproxy[11]: ::1:54308 -> ::1:9445 timestamp2 main masters/control-plane-cluster 1/0/5 3994 -- 95/95/94/66/0 0/0
+<134>timestamp1 haproxy[11]: ::1:43164 -> ::1:9445 timestamp2 main masters/control-plane-cluster 1/0/5 3994 -- 95/95/94/6/0 0/0
+<134>timestamp1 haproxy[11]: ::1:43176 -> ::1:9445 timestamp2 main masters/control-plane-cluster 1/0/8 3994 -- 95/95/94/22/0 0/0
+<134>timestamp1 haproxy[11]: ::1:48510 -> ::1:9445 timestamp2 main masters/control-plane-cluster 1/0/7 3994 -- 95/95/94/66/0 0/0
+<134>timestamp1 haproxy[11]: ::1:41522 -> ::1:9445 timestamp2 main masters/control-plane-cluster 1/0/5 3994 -- 95/95/94/6/0 0/0
+<134>timestamp1 haproxy[11]: ::1:41530 -> ::1:9445 timestamp2 main masters/control-plane-cluster 1/0/5 3994 -- 95/95/94/22/0 0/0
+<134>timestamp1 haproxy[11]: ::1:57256 -> ::1:9445 timestamp2 main masters/control-plane-cluster 1/0/5 3994 -- 95/95/94/66/0 0/0

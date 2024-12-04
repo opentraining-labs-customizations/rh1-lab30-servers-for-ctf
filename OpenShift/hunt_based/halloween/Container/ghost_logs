@@ -1,0 +1,67 @@
+Initializing Norton Ghost 14.0
+OS: Windows XP, Version 5.1.2600 (Service Pack 3)
+Detecting source drive: Disk 0, Model: Seagate ST500DM008
+Detecting destination drive: Disk 1, Model: Western Digital WD10EZEX
+Verifying source drive integrity...
+Source drive: Seagate ST500DM008 - 465.76 GB, 78% free space
+Source drive integrity check passed.
+Starting disk-to-disk cloning process...
+Cloning partition: C:\ (System Reserved, NTFS)
+Starting sector-by-sector copy...
+Error: Disk write error on destination drive (WD10EZEX). Retry attempt 1...
+Retry attempt 1 failed: Destination drive read/write timeout.
+Error: Disk write error on destination drive (WD10EZEX). Retry attempt 2...
+Retry attempt 2 failed: Destination drive is not accessible.
+Error: Cloning process halted due to disk write failure.
+Verifying destination disk status...
+Error: Destination disk (WD10EZEX) reports I/O error. Disk is offline.
+Attempting to reinitialize destination disk...
+Failed to initialize destination disk (WD10EZEX). Disk is physically damaged or disconnected.
+Error: Cloning failed. Source and destination disks are incompatible.
+Check if destination disk is powered on and properly connected.
+Attempting to clone to alternative destination drive: Disk 2 (Model: Samsung SSD 860 EVO)
+Detecting Disk 2: Samsung SSD 860 EVO 500GB.
+Verifying destination disk (Disk 2) integrity...
+Destination disk (Samsung SSD 860 EVO) detected with no errors.
+Starting cloning operation to Disk 2...
+Cloning partition: C:\ (System Reserved, NTFS)
+Starting sector-by-sector copy...
+Error: Write protection detected on destination partition (C:\) on Disk 2.
+Error: Failed to write to destination partition. Write protection may be enabled.
+Error: Cloning halted due to write protection on destination partition.
+Checking destination disk's write protection settings...
+Error: Unable to clear write protection on destination partition.
+Error: Write protection persists on destination partition.
+Attempting to disable write protection on Disk 2...
+Error: Unable to disable write protection. Disk 2 may be locked or have security settings enabled.
+Error: Disk write protection could not be disabled.
+Cloning operation failed due to write protection on destination disk.
+Trying another destination: Disk 3 (Model: Toshiba HDWD120)
+Detecting Disk 3: Toshiba HDWD120, 2TB.
+Verifying destination disk (Disk 3) integrity...
+Destination disk (Toshiba HDWD120) reports SMART errors. Disk may be failing.
+Warning: Destination disk (Toshiba HDWD120) reports read errors.
+Disk errors detected on destination drive. Cloning process cannot continue.
+Error: Destination disk failure. SMART errors detected.
+Cloning process terminated due to failing destination disk.
+Attempting to use network share as backup location...
+Accessing network share: \\server\backup
+Error: Network share \\server\backup not accessible. Connection timed out.
+Error: Unable to connect to network share. Network configuration issue detected.
+Error: Cloning process aborted due to network share access failure.
+Restarting Norton Ghost...
+Reinitialized Norton Ghost.
+OS: Windows XP, Version 5.1.2600 (Service Pack 3)
+Detecting source drive: Disk 0, Model: Seagate ST500DM008
+Detecting destination drive: Disk 1, Model: Western Digital WD10EZEX
+Reattempting cloning operation...
+Source drive: Seagate ST500DM008 - 465.76 GB, 78% free space
+Destination disk: Western Digital WD10EZEX - 1TB, 0% free space
+Error: Destination disk (WD10EZEX) is full. Cannot clone source partition.
+Error: Cloning operation failed due to insufficient space on destination drive.
+Attempting to resize source partition to fit destination...
+Error: Unable to resize source partition for cloning. Insufficient disk space.
+Error: Cloning operation failed due to space constraints on destination drive.
+Disconnected destination disk WD10EZEX. Checking alternate disks...
+Restarting Norton Ghost...
+Norton Ghost restarted successfully.

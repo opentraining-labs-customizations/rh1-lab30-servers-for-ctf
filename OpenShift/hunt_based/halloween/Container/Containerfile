@@ -1,0 +1,18 @@
+FROM registry.redhat.io/ubi9/ubi
+
+RUN dnf install -y python --setopt='tsflags=nodocs' \
+&& dnf clean all \
+&& rm -rf /var/cache/yum
+
+RUN mkdir -p /var/deep/dark/location/where/you/shouldnt/go/or/you/might/regret/it && \
+	echo "1732638919" > /var/deep/dark/location/where/you/shouldnt/go/or/you/might/regret/it/halloween && \
+	touch -t 199410310000 /var/deep/dark/location/where/you/shouldnt/go/or/you/might/regret/it/halloween
+
+
+USER 1001
+
+# Copy the application source code
+ADD ghost_logs /home/1001/ghost_logs
+ADD logs.py /home/1001/logs.py
+
+CMD ["python", "-u", "/home/1001/logs.py"]

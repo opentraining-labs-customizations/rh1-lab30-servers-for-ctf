@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: www-contents
+  namespace: rh1-welcome
+data:
+  index.html: |
+    Welcome to Red Hat 1 2025 CTF
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: welcome
+  name: welcome-app
+  namespace: rh1-welcome
+spec:
+  selector:
+    matchLabels:
+      deployment: welcome
+  template:
+    metadata:
+      labels:
+        deployment: welcome
+    spec:
+      containers:
+      - image: image-registry.openshift-image-registry.svc:5000/openshift/httpd
+        imagePullPolicy: IfNotPresent
+        name: rh1-welcome
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        volumeMounts:
+        - name: www-contents
+          mountPath: /var/www/html/
+          subPath: index.html
+      volumes:
+      - name: www-contents
+        configMap:
+          name: www-contents

@@ -1,0 +1,8 @@
+FROM registry.redhat.io/ubi9/ubi
+ENV TRUENORTH=strongandfree
+RUN dnf install -y python --setopt='tsflags=nodocs' \
+  	&& dnf clean all \
+  	&& rm -rf /var/cache/yum
+COPY logs.py /home/1001/logs.py
+USER 1001
+CMD ["python", "-u", "/home/1001/logs.py"]

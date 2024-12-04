@@ -1,0 +1,27 @@
++ remove_vip 10.10.6.18
++ address=10.10.6.18
+++ awk '/\s10.10.6.18\// {print $2}'
+++ ip -o a
++ interface=
+++ ip -o a
+++ awk '/\s10.10.6.18\// {print $4}'
++ cidr=
++ '[' -n '' ']'
++ remove_vip 10.10.5.18
++ address=10.10.5.18
+++ ip -o a
+++ awk '/\s10.10.5.18\// {print $2}'
++ interface=
+++ ip -o a
+++ awk '/\s10.10.5.18\// {print $4}'
++ cidr=
++ '[' -n '' ']'
++ declare -r keepalived_sock=/var/run/keepalived/keepalived.sock
++ export -f msg_handler
++ export -f reload_keepalived
++ export -f sigterm_handler
++ '[' -f /run/nodeip-configuration/remote-worker ']'
++ trap sigterm_handler SIGTERM
++ '[' -s /etc/keepalived/keepalived.conf ']'
++ rm -f /var/run/keepalived/keepalived.sock
++ socat UNIX-LISTEN:/var/run/keepalived/keepalived.sock,fork 'system:bash -c msg_handler'
