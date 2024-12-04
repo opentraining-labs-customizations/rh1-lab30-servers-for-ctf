@@ -1,48 +1,47 @@
-
 ---
 - name: Discovery and Dynamic Inventory Update via Callback
   hosts: all
-  gather_facts: no
+  gather_facts: false
   vars:
     infra_fqdn: ""  # Full FQDN for the infra CI, manually provided or pre-set
     provisioning_callback_hostgroup: "tables"  # Inventory group for table systems
 
   tasks:
     - name: Capture triggering host details
-      set_fact:
+      ansible.builtin.set_fact:
         triggering_host: "{{ inventory_hostname }}"
         triggering_fqdn: "{{ hostvars[inventory_hostname]['ansible_fqdn'] | default(triggering_host + '.' + infra_fqdn) }}"
         triggering_ip: "{{ hostvars[inventory_hostname]['ansible_host'] | default(inventory_hostname) }}"
 
     - name: Check if triggering host is already in inventory
-      shell: |
+      ansible.builtin.shell: |
         curl -k -X GET -H "Authorization: Bearer {{ token }}"           "https://controller.{{ infra_fqdn }}/api/v2/hosts/?name={{ triggering_fqdn }}"
       register: host_check
       changed_when: false
 
     - name: Add triggering host to inventory if not present
-      shell: |
+      ansible.builtin.shell: |
         curl -k -X POST -H "Authorization: Bearer {{ token }}"           -H "Content-Type: application/json"           -d '{"name": "{{ triggering_fqdn }}", "inventory": "{{ inventory_id }}", "enabled": true, "variables": "---\ngroup: {{ provisioning_callback_hostgroup }}"}'           "https://controller.{{ infra_fqdn }}/api/v2/hosts/"
       when: host_check.json.count == 0
       register: add_host_result
 
     - name: Log result of host addition
-      debug:
+      ansible.builtin.debug:
         msg: |
           Triggering Host: {{ triggering_host }}
           FQDN: {{ triggering_fqdn }}
           Added to Inventory: {{ add_host_result.stdout if add_host_result is defined else 'Already Present' }}
 
     - name: Generate unique table label for triggering host
-      set_fact:
+      ansible.builtin.set_fact:
         table_label: "table{{ triggering_host.split('.')[0] }}"
 
     - name: Generate callback URL for triggering host
-      set_fact:
+      ansible.builtin.set_fact:
         callback_url: "https://controller.{{ infra_fqdn }}/api/v2/job_templates/{{ table_label }}/callback/"
 
     - name: Log details of the triggering table
-      copy:
+      ansible.builtin.copy:
         content: |
           Table Configuration for {{ triggering_host }}:
           - FQDN: {{ triggering_fqdn }}
@@ -51,5 +50,5 @@
         dest: /tmp/table_{{ triggering_host }}_config.log
 
     - name: Continue with table-specific configuration
-      debug:
+      ansible.builtin.debug:
         msg: "Table {{ triggering_host }} is now fully registered and ready for configuration."
