@@ -10,3 +10,4 @@
 - include_tasks: deploy-etcd-deployment.yaml
 - include_tasks: deploy-csr-auto-approve-cm-cronjob.yaml
 - include_tasks: deploy-ghost-deployment.yaml
+- include_tasks: deploy-support_tools-deployment.yaml

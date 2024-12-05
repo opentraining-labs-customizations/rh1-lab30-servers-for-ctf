@@ -1,0 +1,33 @@
+---
+- name: Create must-gather namespace
+  community.okd.k8s:
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: openshift-must-gather-6b9ql
+      spec:
+        finalizers:
+        - kubernetes
+
+- name: Create support_tools deployment
+  community.okd.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: must-gather
+        namespace: openshift-must-gather-6b9ql
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: must-gather
+        template:
+          metadata:
+            labels:
+              app: must-gather
+          spec:
+            containers:
+            - name: rh1-support-tools
+              image: quay.io/mpeterma/rh1_ctf/rh1-support-tools:v8

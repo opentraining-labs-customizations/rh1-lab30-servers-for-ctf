@@ -3,7 +3,7 @@ kind: MachineConfig
 metadata:
   labels:
     machineconfiguration.openshift.io/role: worker
-  name: 50-worker-ntp-configuration
+  name: 50-workers-ntp-configuration
 spec:
   config:
     ignition:
