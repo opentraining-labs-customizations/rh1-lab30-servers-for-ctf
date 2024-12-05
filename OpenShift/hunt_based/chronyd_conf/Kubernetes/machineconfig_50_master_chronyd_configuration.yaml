@@ -3,7 +3,7 @@ kind: MachineConfig
 metadata:
   labels:
     machineconfiguration.openshift.io/role: master
-  name: 50-masters-ntp-configuration
+  name: 50-master-ntp-configuration
 spec:
   config:
     ignition:
