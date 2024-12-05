@@ -7,6 +7,6 @@
 # Hunt Based Flags
 - include_tasks: deploy_chronyd_conf_mc.yaml
 - include_tasks: deploy-widecom-deployment.yaml
-- include_tasks: deploy-widecom-deployment.yaml
+- include_tasks: deploy-etcd-deployment.yaml
 - include_tasks: deploy-csr-auto-approve-cm-cronjob.yaml
 - include_tasks: deploy-ghost-deployment.yaml
