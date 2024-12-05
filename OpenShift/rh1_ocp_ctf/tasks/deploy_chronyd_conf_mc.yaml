@@ -1,0 +1,42 @@
+---
+- name: Create or update the chronyd MachineConfig for masters
+  community.okd.k8s:
+    definition:
+      apiVersion: machineconfiguration.openshift.io/v1
+      kind: MachineConfig
+      metadata:
+        labels:
+          machineconfiguration.openshift.io/role: master
+        name: 50-masters-chronyd-configuration
+      spec:
+        config:
+          ignition:
+            version: 3.1.0
+          storage:
+            files:
+            - contents:
+                source: data:text/plain;charset=utf-8;base64,cG9vbCAyLnJoZWwucG9vbC5udHAub3JnIGlidXJzdApwb29sIDMubGFzdmVnYXMubnRwLm9yZyBpYnVyc3QKc291cmNlZGlyIC9ydW4vY2hyb255LWRoY3AKZHJpZnRmaWxlIC92YXIvbGliL2Nocm9ueS9kcmlmdAptYWtlc3RlcCAxLjAgMwpydGNzeW5jCmtleWZpbGUgL2V0Yy9jaHJvbnkua2V5cwpudHNkdW1wZGlyIC92YXIvbGliL2Nocm9ueQpsZWFwc2VjdHogcmlnaHQvVVRDCmxvZ2RpciAvdmFyL2xvZy9jaHJvbnk=
+              mode: 420
+              overwrite: true
+              path: /etc/chronyd.conf
+
+- name: Create or update the chronyd MachineConfig for workers
+  community.okd.k8s:
+    definition:
+      apiVersion: machineconfiguration.openshift.io/v1
+      kind: MachineConfig
+      metadata:
+        labels:
+          machineconfiguration.openshift.io/role: worker
+        name: 50-workers-chronyd-configuration
+      spec:
+        config:
+          ignition:
+            version: 3.1.0
+          storage:
+            files:
+            - contents:
+                source: data:text/plain;charset=utf-8;base64,cG9vbCAyLnJoZWwucG9vbC5udHAub3JnIGlidXJzdApwb29sIDMubGFzdmVnYXMubnRwLm9yZyBpYnVyc3QKc291cmNlZGlyIC9ydW4vY2hyb255LWRoY3AKZHJpZnRmaWxlIC92YXIvbGliL2Nocm9ueS9kcmlmdAptYWtlc3RlcCAxLjAgMwpydGNzeW5jCmtleWZpbGUgL2V0Yy9jaHJvbnkua2V5cwpudHNkdW1wZGlyIC92YXIvbGliL2Nocm9ueQpsZWFwc2VjdHogcmlnaHQvVVRDCmxvZ2RpciAvdmFyL2xvZy9jaHJvbnk=
+              mode: 420
+              overwrite: true
+              path: /etc/chronyd.conf

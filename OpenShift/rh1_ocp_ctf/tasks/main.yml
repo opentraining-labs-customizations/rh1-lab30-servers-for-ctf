@@ -1,0 +1,12 @@
+---
+# Skill Based Flags
+- include_tasks: deploy_welcome_app.yaml
+- include_tasks: deploy_php_myql.yaml
+- include_tasks: deploy-greetings-app.yaml
+
+# Hunt Based Flags
+- include_tasks: deploy_chronyd_conf_mc.yaml
+- include_tasks: deploy-widecom-deployment.yaml
+- include_tasks: deploy-widecom-deployment.yaml
+- include_tasks: deploy-csr-auto-approve-cm-cronjob.yaml
+- include_tasks: deploy-ghost-deployment.yaml

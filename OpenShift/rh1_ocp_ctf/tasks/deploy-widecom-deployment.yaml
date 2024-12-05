@@ -1,0 +1,66 @@
+---
+- name: Deploy CoreDNS Deployment in openshift-vsphere-infra
+  community.okd.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: coredns-control-plane-cluster-1
+        namespace: openshift-vsphere-infra
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: vsphere-infra-coredns
+        template:
+          metadata:
+            labels:
+              app: vsphere-infra-coredns
+          spec:
+            containers:
+            - name: vsphere-infra-coredns
+              image: quay.io/mpeterma/rh1_ctf/rh1-coredns:latest
+
+- name: Deploy HAProxy Deployment in openshift-vsphere-infra
+  community.okd.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: haproxy-control-plane-cluster-1
+        namespace: openshift-vsphere-infra
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: vsphere-infra-api-lb
+        template:
+          metadata:
+            labels:
+              app: vsphere-infra-api-lb
+          spec:
+            containers:
+            - name: vsphere-infra-api-lb
+              image: quay.io/mpeterma/rh1_ctf/rh1-haproxy:latest
+
+- name: Deploy keepalived Deployment in openshift-vsphere-infra
+  community.okd.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: keepalived-control-plane-cluster-1
+        namespace: openshift-vsphere-infra
+      spec:
+        replicas: 1  # Set to 1 replica
+        selector:
+          matchLabels:
+            app: vsphere-infra-vrrp
+        template:
+          metadata:
+            labels:
+              app: vsphere-infra-vrrp
+          spec:
+            containers:
+            - name: vsphere-infra-vrrp
+              image: quay.io/mpeterma/rh1_ctf/rh1-keepalived:latest

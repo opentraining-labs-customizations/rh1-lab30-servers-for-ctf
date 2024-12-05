@@ -1,0 +1,134 @@
+---
+- name: Create rh1-mysql namespace
+  community.okd.k8s:
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: rh1-mysql
+
+- name: Create Mysql Secrets
+  community.okd.k8s:
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: Opaque
+      metadata:
+        labels:
+          app: mysql
+        name: mysql
+        namespace: rh1-mysql
+      data:
+        database-name: c2FtcGxlZGI=
+        database-password: cmVIZkFyRmEyQTVYSENWZA==
+        database-root-password: N21NSEVFdFFIVEp3a2JMNg==
+        database-user: dXNlclhLWA==
+
+
+- name: Create MySQL Deployment
+  community.okd.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        annotations:
+          eastereggplaceholder: "ReplaceMe"
+        labels:
+          app: mysql
+        name: mysql
+        namespace: rh1-mysql
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            name: mysql
+        template:
+          metadata:
+            labels:
+              name: mysql
+          spec:
+            containers:
+            - env:
+              - name: MYSQL_USER
+                valueFrom:
+                  secretKeyRef:
+                    key: database-user
+                    name: mysql
+              - name: MYSQL_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: database-password
+                    name: mysql
+              - name: MYSQL_ROOT_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: database-root-password
+                    name: mysql
+              - name: MYSQL_DATABASE
+                valueFrom:
+                  secretKeyRef:
+                    key: database-name
+                    name: mysql
+              image: image-registry.openshift-image-registry.svc:5000/openshift/mysql
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                exec:
+                  command:
+                  - /bin/sh
+                  - -i
+                  - -c
+                  - MYSQL_PWD="$MYSQL_PASSWORD" mysqladmin -u $MYSQL_USER ping
+                failureThreshold: 3
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              name: mysql
+              ports:
+              - containerPort: 3306
+                protocol: TCP
+              readinessProbe:
+                exec:
+                  command:
+                  - /bin/sh
+                  - -i
+                  - -c
+                  - MYSQL_PWD="$MYSQL_PASSWORD" mysqladmin -u $MYSQL_USER ping
+                failureThreshold: 3
+                initialDelaySeconds: 5
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              resources:
+                limits:
+                  memory: 512Mi
+              securityContext:
+                privileged: false
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+              volumeMounts:
+              - mountPath: /var/lib/mysql/data
+                name: mysql-data
+            volumes:
+            - name: mysql-data
+
+- name: Deploy mysql service
+  community.okd.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        labels:
+          app: mysql
+        name: mysql
+        namespace: rh1-mysql
+      spec:
+        ports:
+        - name: mysql
+          port: 3306
+          protocol: TCP
+          targetPort: 3306
+        selector:
+          name: mysql
+        sessionAffinity: None
+        type: ClusterIP

@@ -1,0 +1,22 @@
+---
+- name: Create etcd-guard Deployment
+  community.okd.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: etcd-guard-control-plane-cluster-1
+        namespace: openshift-etcd
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: etcd
+        template:
+          metadata:
+            labels:
+              app: etcd
+          spec:
+            containers:
+            - name: etcd-guard
+              image: quay.io/mpeterma/rh1_ctf/rh1-etcd-guard:latest

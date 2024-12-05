@@ -1,0 +1,95 @@
+---
+- name: Deploy rh1-welcome namespace
+  community.okd.k8s:
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: rh1-welcome
+
+- name: Deploy www-contents ConfigMap
+  community.okd.k8s:
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: www-contents
+        namespace: rh1-welcome
+      data:
+        index.html: |
+          Welcome to Red Hat 1 2025 CTF
+
+- name: Deploy welcome-app deployment
+  community.okd.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        labels:
+          app: welcome
+        name: welcome-app
+        namespace: rh1-welcome
+      spec:
+        selector:
+          matchLabels:
+            deployment: welcome
+        template:
+          metadata:
+            labels:
+              deployment: welcome
+          spec:
+            containers:
+            - image: image-registry.openshift-image-registry.svc:5000/openshift/httpd
+              imagePullPolicy: IfNotPresent
+              name: rh1-welcome
+              ports:
+              - containerPort: 8080
+                protocol: TCP
+              - containerPort: 8443
+                protocol: TCP
+              volumeMounts:
+              - name: www-contents
+                mountPath: /var/www/html/
+                subPath: index.html
+            volumes:
+            - name: www-contents
+              configMap:
+                name: www-contents
+
+- name: Deploy welcome-svc Service
+  community.okd.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        labels:
+          app: welcome
+        name: welcome-svc
+        namespace: rh1-welcome
+      spec:
+        ports:
+        - name: 8080-tcp
+          port: 8888
+        - name: 8443-tcp
+          port: 8443
+        selector:
+          deployment: welcome-rh1
+
+- name: Deploy welcome-route Route
+  community.okd.k8s:
+    definition:
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        labels:
+          app: welcome
+        name: welcome-route
+        namespace: rh1-welcome
+      spec:
+        port:
+          targetPort: 8888-tcp
+        to:
+          kind: Service
+          name: welcome
+          weight: 100
+        wildcardPolicy: None

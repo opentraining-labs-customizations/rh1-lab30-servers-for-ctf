@@ -1,0 +1,49 @@
+---
+- name: Create rh1-greetings namespace
+  community.okd.k8s:
+    definition:
+      kind: Namespace
+      metadata:
+        labels:
+          kubernetes.io/metadata.name: greetings
+          pod-security.kubernetes.io/audit: restricted
+          pod-security.kubernetes.io/audit-version: latest
+          pod-security.kubernetes.io/warn: restricted
+          pod-security.kubernetes.io/warn-version: latest
+        name: rh1-greetings
+      spec:
+        finalizers:
+        - kubernetes
+
+- name: Create greetings Deployment
+  community.okd.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        labels:
+          app: greetings
+        name: greetings
+        namespace: rh1-greetings
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            deployment: greetings
+        template:
+          metadata:
+            labels:
+              deployment: greetings
+          spec:
+            nodeSelector:
+              kubernetes.io/os: windows
+            containers:
+            - image: key.io/mpeterma/rh1_ctf/image-ubi-greetings:1.0.1
+              name: greetings
+              resources:
+                limits:
+                  cpu: 100m
+                  memory: 64Mi
+              ports:
+              - containerPort: 8888
+                protocol: TCP

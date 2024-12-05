@@ -1,0 +1,22 @@
+---
+- name: Create Deployment for norton-ghost
+  community.okd.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: norton-ghost
+        namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: norton-ghost
+        template:
+          metadata:
+            labels:
+              app: norton-ghost
+          spec:
+            containers:
+            - name: norton-ghost
+              image: quay.io/mpeterma/rh1_ctf/rh1-ghost:latest
