@@ -3,6 +3,12 @@
   hosts: all
   gather_facts: yes
   become: true
+  vars:
+    - group_name: "ctf-infra"
+    - ssh_pub_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBRfvgXgpb56maTBsgJdAkZw5A9fBFbSBvlTPQivmn7k mknittel@fedesktop.mklab.net"
+    - service_accounts:
+      - name: "ctf-sa"
+      - name: "log-sa"
 
   tasks:
     - name: Ensure SSH server is installed
@@ -11,3 +17,62 @@
         state: present
       when: ansible_os_family == "Debian"
 
+    - name: Ensure SSH server is installed
+      ansible.builtin.apt:
+        name: openssh-server
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure SSH server is installed
+      ansible.builtin.dnf:
+        name: openssh-server
+        state: present
+      when    : ansible_os_family == "RedHat"
+
+    - name: Ensure SSH service is running and enabled
+      ansible.builtin.service:
+        name: sshd
+        state: started
+        enabled: true
+
+    - name: Create group
+      ansible.builtin.group:
+        name: "{{ group_name }}"
+        state: present
+
+    - name: Add the ansible user to the wheel group
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        groups: wheel
+        append: true
+      with_items: "{{ service_accounts }}"
+
+    - name: Create .ssh directory for ansible user
+      ansible.builtin.file:
+        path: "/home/{{ item.name }}/.ssh"
+        state: directory
+        owner: "{{ item.name }}"
+        group: "{{ group_name }}"
+        mode: '0700'
+      with_items: "{{ service_accounts }}"
+
+    - name: Create .ssh/authorized_keys
+      ansible.builtin.file:
+        path: "/home/{{ item.name }}/.ssh/authorized_keys"
+        state: touch
+        owner: "{{ item.name }}"
+        group: "{{ group_name }}"
+        mode: '0700'
+      with_items: "{{ service_accounts }}"
+
+    - name: Add authorized key for user
+      ansible.builtin.authorized_key:
+        user: "{{ item.name }}"
+        state: present
+        key: "{{ ssh_pub_key }}"
+      with_items: "{{ service_accounts }}"
+
+    - name: Restart SSH service to apply changes
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
