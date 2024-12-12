@@ -1,0 +1,13 @@
+---
+- name: Config CTF env
+  hosts: all
+  gather_facts: yes
+  become: true
+
+  tasks:
+    - name: Ensure SSH server is installed
+      ansible.builtin.apt:
+        name: openssh-server
+        state: present
+      when: ansible_os_family == "Debian"
+
