@@ -11,4 +11,7 @@ CREATE TABLE message (
 );
 
 -- Insert the message into the table
-INSERT INTO message (content) VALUES ('Welcome to Red Hat One CTF 2025');
+INSERT INTO message (content) VALUES ('PHP ROCKS!');
+INSERT INTO message (content) VALUES ('No it doesnt!');
+INSERT INTO message (content) VALUES ('Python is better!');
+INSERT INTO message (content) VALUES ('o5D!06JGt9xb');
