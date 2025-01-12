@@ -5,6 +5,23 @@
   vars:
     ctfd_dir: "/ctfd"
     selinux_config: "/etc/selinux/config"
+    systemd_unit_file: "/etc/systemd/system/ctfd.service"
+    ctfd_service_content: |
+      [Unit]
+      Description=CTFD Service
+      After=network.target
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/local/bin/podman-compose -f /ctfd/CTFd/docker-compose.yml up
+      ExecStop=/usr/local/bin/podman-compose -f /ctfd/CTFd/docker-compose.yml down
+      Restart=always
+      WorkingDirectory=/ctfd/CTFd
+      User=root
+      Group=root
+
+      [Install]
+      WantedBy=multi-user.target
 
   tasks:
     - name: Ensure SELinux is set to permissive temporarily
@@ -50,19 +67,18 @@
 
     - name: Configure default container registry
       block:
-      - name: Backup existing registries.conf
-        ansible.builtin.copy:
-          src: /etc/containers/registries.conf
-          dest: /etc/containers/registries.conf.bak
-          remote_src: true
+        - name: Backup existing registries.conf
+          ansible.builtin.copy:
+            src: /etc/containers/registries.conf
+            dest: /etc/containers/registries.conf.bak
+            remote_src: true
 
-      - name: Set docker.io as default registry
-        ansible.builtin.lineinfile:
-          path: /etc/containers/registries.conf
-          regexp: '^registries =.*'
-          line: 'registries = ["docker.io", "quay.io", "registry.access.redhat.com", "registry.redhat.io"]'
-          insertafter: 'unqualified-search-registries ='
-
+        - name: Set docker.io as default registry
+          ansible.builtin.lineinfile:
+            path: /etc/containers/registries.conf
+            regexp: '^registries =.*'
+            line: 'registries = ["docker.io", "quay.io", "registry.access.redhat.com", "registry.redhat.io"]'
+            insertafter: 'unqualified-search-registries ='
 
     - name: Run podman-compose to deploy CTFD
       ansible.builtin.command: /usr/local/bin/podman-compose up -d
@@ -85,3 +101,33 @@
           Hostname: {{ ansible_fqdn }}
           CTFD Directory: {{ ctfd_dir }}
         dest: "{{ ctfd_dir }}/ctfd_deployment.log"
+
+    - name: Deploy systemd unit file for CTFD
+      ansible.builtin.copy:
+        content: "{{ ctfd_service_content }}"
+        dest: "{{ systemd_unit_file }}"
+        mode: '0644'
+
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable and start the CTFD service
+      ansible.builtin.systemd:
+        name: ctfd
+        enabled: true
+        state: started
+
+    - name: Validate CTFD service status
+      ansible.builtin.systemd:
+        name: ctfd
+        state: started
+      register: service_status
+
+    - name: Log service deployment status
+      ansible.builtin.copy:
+        content: |
+          Service Deployment Status:
+          Hostname: {{ ansible_fqdn }}
+          CTFD Service: {{ 'Active' if service_status.status.ActiveState == 'active' else 'Inactive' }}
+        dest: "{{ ctfd_dir }}/ctfd_service_status.log"
