@@ -77,7 +77,23 @@
           ansible.builtin.lineinfile:
             path: /etc/containers/registries.conf
             regexp: '^registries =.*'
-            line: 'registries = ["docker.io", "quay.io", "registry.access.redhat.com", "registry.redhat.io"]'
+            # line: 'registries = ["docker.io", "quay.io", "registry.access.redhat.com", "registry.redhat.io"]'
+            line: |
+              [[registry]]
+              location = "quay.io"
+              blocked = false
+              
+              [[registry]]
+              location = "docker.io"
+              blocked = false
+              
+              [[registry]]
+              location = "registry.access.redhat.io"
+              blocked = false
+              
+              [[registry]]
+              location = "registry.redhat.io"
+              blocked = false
             insertafter: 'unqualified-search-registries ='
 
     - name: Run podman-compose to deploy CTFD
